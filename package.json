@@ -1,7 +1,7 @@
 {
   "name": "xenmovies",
   "version": "1.0.0",
-  "description": "XENMOVIES - Aesthetic Personal Free Streaming & Download Hub",
+  "description": "Movie and TV-series discovery, metadata, watchlist, and viewing-history application",
   "main": "server/index.js",
   "type": "module",
   "scripts": {
@@ -9,31 +9,32 @@
     "dev:server": "node server/index.js",
     "dev:client": "vite",
     "build": "vite build",
+    "prestart": "vite build",
     "start": "node server/index.js"
   },
   "keywords": [
     "movies",
-    "streaming",
-    "downloads",
-    "torrent",
-    "magnet",
-    "cinemeta",
-    "entertainment"
+    "tv",
+    "discovery",
+    "metadata",
+    "watchlist",
+    "react",
+    "vite",
+    "express"
   ],
   "author": "Antigravity",
-  "license": "MIT",
+  "license": "UNLICENSED",
   "dependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@vitejs/plugin-react": "^6.2.0",
     "better-sqlite3": "^13.0.3",
+    "concurrently": "^10.0.6",
     "cors": "^2.8.6",
     "dotenv": "^18.0.9",
     "express": "^5.3.0",
     "jszip": "^3.10.2",
-    "lucide-react": "^1.66.0"
-  },
-  "devDependencies": {
-    "@tailwindcss/vite": "^4.3.3",
-    "@vitejs/plugin-react": "^6.2.0",
-    "concurrently": "^10.0.6",
+    "lucide-react": "^1.66.0",
+    "pg": "^8.23.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "tailwindcss": "^4.3.3",

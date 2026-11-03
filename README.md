@@ -1,132 +1,137 @@
-# 🎬 XENMOVIES — Aesthetic Free Streaming & Download Hub
+# XEN-MOVIES
 
-A sleek, cyberpunk-glassmorphic personal movie and TV show streaming & downloading web application built to run **100% locally on your PC**. Inspired by sites like **HDHub4u** and **Vegamovies**, but redesigned with a modern, high-tech, ad-free cinema experience.
+A React + Vite frontend with an Express API for movie and TV-series discovery, metadata browsing, watchlists, viewing history, preferences, and personal statistics.
 
----
+> **Content and third-party services:** This project does not host or store movie or TV media. The source includes integrations with third-party services, whose availability, terms, and content rights are outside this project's control. Only access content you are legally authorized to view, and follow the laws and terms that apply where you live.
 
-## ✨ Features at a Glance
+## Features
 
-### 1. 🔀 Dual Experience: "Stream It" or "Download It"
-- **▶ Instant Stream**:
-  - Embedded cinema player with **6 High-Speed Servers**:
-    1. **VidLink Pro** (Ultra HD 4K, Subtitle Controls)
-    2. **2Embed VIP** (Multi-Language Subtitles)
-    3. **VidSrc ICU** (Dual Audio & High Bandwidth)
-    4. **AutoEmbed Cloud** (Auto-Switching Mirror)
-    5. **SmashyStream** (Fast Buffering)
-    6. **MultiEmbed Global** (Backup Mirror)
-  - Full TV Series Season & Episode Selector with episode thumbnails, titles, and air dates.
-  - Theater Mode / Cinema Lights Dimmer.
-  - Automatic progress tracking to local SQLite database so you can resume where you left off.
+- Movie and TV-series catalogue discovery and search
+- Metadata, artwork, cast, and episode information from external metadata services
+- Watchlist and viewing-history features
+- Local preferences and theme options
+- Personal viewing statistics
+- React frontend, Express API, and SQLite/PostgreSQL database adapters
+- Vite development server and production build
 
-- **📥 Vegamovies / HDHub4u Download Engine**:
-  - **📦 Whole Season Batch Download (.ZIP)**: Download an entire TV show season in one packaged `.zip` file! Includes a 1-click Windows batch downloader script (`.bat`), season batch magnets, individual episode shortcuts, offline player portal, and full episode guides.
-  - **🧲 Complete Season Torrent Packs**: Download all episodes into a single organized folder directly in qBittorrent, FDM, or uTorrent.
-  - Direct categorized downloads parsed from high-speed DHT & P2P trackers (1337x, YTS, TorrentGalaxy, Rutracker):
-    - 🌟 **4K Ultra HD (2160p HDR/DV - AV1 & HEVC)**
-    - 💎 **1080p Full HD (Dual Audio Hindi - English / 10-Bit)**
-    - ⚡ **720p HD (High Speed Compact ~1GB)**
-    - 📱 **480p SD (Mobile Friendly ~400MB)**
-    - 🇮🇳 **Hindi Dubbed & Dual Audio Specials**
-  - Displays seeders count, file size, codec badges (`AV1`, `HEVC`, `HDR10`, `Atmos`), and language flags.
-  - **1-Click Launch**: Automatically opens magnets in **qBittorrent**, **uTorrent**, or **Free Download Manager (FDM)**.
-  - One-click copy magnet button with instant clipboard feedback.
-  - Save to local Download Queue.
+Feature availability depends on the configured third-party services.
 
-### 2. 🌐 Integrated Free APIs (Zero Paid Keys Required)
-- **Cinemeta API**: Millions of movies and TV series catalog, metadata, genres, search, cast, posters, and YouTube trailers.
-- **Torrentio API**: Real-time stream and torrent resolver querying top global trackers.
-- **Cloudstream 3 API Engine**: Built-in Cloudstream multi-provider resolver (SoraStream, SuperStream, Vegamovies Mirror) with `cloudstream://` deep linking and custom repository manifest.
-- **TVMaze & OpenSubtitles**: TV episode structuring and subtitle feeds.
-- **6 Free Streaming Embed Providers**: VidLink, 2Embed, VidSrc, AutoEmbed, SmashyStream, MultiEmbed.
+## Technology
 
-### 3. 💾 Local Data Persistence (SQLite `xenmovies.db`)
-- **Continue Watching / History**: Automatically records your last played media, season, episode, and progress.
-- **My Watchlist**: Bookmark movies & shows into your personal local vault.
-- **Download Queue**: Log of all downloaded/magnet links generated.
-- **Settings & Preferences**: Saved server preference, theme preference, audio priority.
-- **Cinema Stats**: Analytics dashboard showing total stream hours and watched breakdown.
+- React
+- Vite
+- Tailwind CSS
+- Express
+- SQLite (`better-sqlite3`) for local use
+- PostgreSQL (`pg`) when `DATABASE_URL` is configured
 
-### 4. 🎨 5 Unique Aesthetic Themes
-- 🟣 **Cyberpunk Neon**: Electric Violet, Neon Cyan, Obsidian
-- 🟢 **Matrix Emerald**: Hacker Green, Mint, Deep Pitch
-- 🔴 **Crimson OLED**: Cinematic Red, Rose Glow, Velvet
-- 🟡 **Solar Amber**: Warm Amber, Luxury Gold, Carbon
-- 🔵 **Glacier Blue**: Deep Ocean Blue, Electric Sky, Slate
+## Requirements
 
----
+- Node.js 22 (or a compatible supported version)
+- npm
+- Windows is required only for the included `.bat` and PowerShell launchers
 
-## 🚀 How to Run Locally
+## Getting started
 
-### Option A: 1-Click Launch (Recommended)
-Simply double-click:
-```bat
-start.bat
-```
-*(Or right-click `run.ps1` and select "Run with PowerShell")*
+1. Clone the repository:
 
-This will automatically launch the server and open your browser at:
-👉 **`http://localhost:5000`**
+   ```bash
+   git clone https://github.com/PARTH-XEN/XEN-MOVIES.git
+   cd XEN-MOVIES
+   ```
 
----
+2. Install dependencies:
 
-### Option B: Command Line (Development Mode)
-```bash
-# Install dependencies (already installed)
-npm install
+   ```bash
+   npm ci
+   ```
 
-# Start both Express backend and Vite hot-reload frontend
-npm run dev
-```
-- Frontend: `http://localhost:5173`
-- Backend API & DB: `http://localhost:5000`
+3. Create your local environment file:
 
----
+   ```bash
+   cp .env.example .env
+   ```
 
-## 🧲 Recommended Windows Torrent Clients
-To make the 1-click **"Start Download"** button open seamlessly:
-- **qBittorrent** (Free, open source, no ads — Recommended): [https://www.qbittorrent.org/](https://www.qbittorrent.org/)
-- **Free Download Manager (FDM)**: [https://www.freedownloadmanager.org/](https://www.freedownloadmanager.org/)
-- **uTorrent / BitTorrent**
+   On Windows PowerShell, use:
 
----
+   ```powershell
+   Copy-Item .env.example .env
+   ```
 
-## 📁 Project Architecture
-```
-D:\XENMOVIES\
-├── package.json           # Scripts & modern dependencies
-├── vite.config.js         # Vite + Tailwind v4 + API proxy
-├── xenmovies.db           # Local SQLite database (auto-created)
-├── start.bat              # 1-Click Windows launcher
-├── run.ps1                # PowerShell launcher
-├── dist/                  # Production-ready client build
-├── src/                   # React frontend
-│   ├── App.jsx            # Main app router & tabs
-│   ├── index.css          # Cyberpunk glassmorphism styles & themes
-│   ├── context/
-│   │   └── AppContext.jsx # Global state & SQLite data sync
-│   ├── components/
-│   │   ├── Navbar.jsx
-│   │   ├── Sidebar.jsx
-│   │   ├── HeroBanner.jsx
-│   │   ├── MovieCard.jsx
-│   │   ├── StreamPlayerModal.jsx  # 6-server embedded player
-│   │   ├── DownloadModal.jsx      # Vegamovies 4K/1080p/Dual Audio engine
-│   │   ├── MediaDetailsModal.jsx  # Trailer, cast, storyline, episodes
-│   │   ├── FilterBar.jsx
-│   │   ├── WatchlistTab.jsx
-│   │   ├── HistoryTab.jsx
-│   │   ├── DownloadsTab.jsx
-│   │   ├── SettingsTab.jsx
-│   │   └── StatsTab.jsx
-│   └── services/
-│       └── api.js
-└── server/                # Node.js Express backend
-    ├── index.js           # API routes & static file server
-    ├── db.js              # SQLite schema & tables
-    └── services/
-        ├── cinemeta.js     # Metadata & catalog search
-        ├── torrentio.js    # Magnet links & quality categorizer
-        └── embedSources.js # Streaming server resolvers
+4. Start the development frontend and API:
+
+   ```bash
+   npm run dev
+   ```
+
+   - Vite frontend: `http://localhost:5173`
+   - Express API: `http://localhost:5000`
+
+5. For a production-style local run:
+
+   ```bash
+   npm start
+   ```
+
+   The `prestart` script builds the frontend before starting the Express server.
+
+## Environment configuration
+
+See [`.env.example`](.env.example).
+
+- `PORT` controls the Express server port (defaults to `5000`).
+- `DATABASE_URL` is optional. If set, the server uses PostgreSQL. If omitted, the local SQLite fallback is used.
+
+Never commit `.env`, database credentials, API tokens, or real user data.
+
+## Database and deployment warning
+
+The current API includes history, watchlist, downloads, and settings endpoints without user authentication or per-user access controls. If you deploy this application for multiple visitors with a shared PostgreSQL database, those records and settings may be shared across visitors.
+
+**Do not store personal or sensitive user data in a public deployment until authentication, authorization, per-user data isolation, request validation, and appropriate rate limiting have been implemented and reviewed.** Use a disposable development database while evaluating the application.
+
+For hosted deployments, verify that the database is persistent and backed up. The SQLite fallback writes a local database file; ephemeral hosting filesystems can lose that data after a restart or redeployment. PostgreSQL is generally more suitable for a hosted multi-instance deployment, but it does not replace authentication or access controls.
+
+## Project structure
+
+```text
+.
+├── LOGO/                  # Project logo assets
+├── server/
+│   ├── index.js           # Express API and static-file server
+│   ├── db.js              # SQLite/PostgreSQL adapters
+│   └── services/          # External metadata/service adapters
+├── src/
+│   ├── components/        # React UI components
+│   ├── context/           # Application state
+│   ├── hooks/             # UI hooks
+│   ├── services/          # Frontend API client
+│   └── utils/              # Shared frontend utilities
+├── .env.example
+├── index.html
+├── package.json
+├── package-lock.json
+└── vite.config.js
 ```
 
+## Available scripts
+
+| Command | Purpose |
+|---|---|
+| `npm run dev` | Run Vite and the Express API concurrently |
+| `npm run dev:client` | Run the Vite development server |
+| `npm run dev:server` | Run the Express API |
+| `npm run build` | Build the frontend into `dist/` |
+| `npm start` | Build the frontend, then start the Express server |
+
+## Contributing
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. Keep changes focused, avoid committing generated files, and never include secrets or real database contents.
+
+## Security
+
+Please read [SECURITY.md](SECURITY.md) before reporting a security issue. Do not post credentials, private data, or exploitable details in public issues.
+
+## License
+
+No license has been selected for redistribution of this project yet. The repository is public for inspection, but public visibility alone does not grant permission to copy, modify, or redistribute the code. Add a license only after the project owner has chosen the intended terms.
