@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 
 export default function DownloadModal() {
-  const { downloadModal, closeDownload, openStream, addToast, reloadData } = useApp();
+  const { downloadModal, closeDownload, openStream, addToast, reloadData, user, openAuthModal } = useApp();
   const { isOpen, media, season: initialSeason = 1, episode: initialEpisode = 1 } = downloadModal;
 
   const [activeTab, setActiveTab] = useState('all');
@@ -77,6 +77,12 @@ export default function DownloadModal() {
   if (!isOpen || !media) return null;
 
   const handleCopyMagnet = (stream) => {
+    if (!user) {
+      closeDownload();
+      openAuthModal('login');
+      addToast('Sign in required: Please create an account or sign in to copy torrent magnets.', 'info');
+      return;
+    }
     if (!stream.magnet) return;
     navigator.clipboard.writeText(stream.magnet);
     setCopiedHash(stream.infoHash);
@@ -98,6 +104,12 @@ export default function DownloadModal() {
   };
 
   const handleLaunchTorrent = (stream) => {
+    if (!user) {
+      closeDownload();
+      openAuthModal('login');
+      addToast('Sign in required: Please create an account or sign in to download via torrent.', 'info');
+      return;
+    }
     if (!stream.magnet) return;
     
     api.saveDownload({
@@ -123,6 +135,12 @@ export default function DownloadModal() {
 
   // Download Season Batch as a real .ZIP file
   const handleDownloadSeasonZip = () => {
+    if (!user) {
+      closeDownload();
+      openAuthModal('login');
+      addToast('Sign in required: Please create an account or sign in to download Season Batch ZIP files.', 'info');
+      return;
+    }
     setZipping(true);
     addToast(`Building Season ${currentSeason} Complete Batch ZIP archive...`, 'info');
 
@@ -171,17 +189,20 @@ export default function DownloadModal() {
   else if (activeTab === 'hindi') displayedStreams = categorizedPool.dualAudioHindi || [];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-xl p-3 sm:p-6 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/85 backdrop-blur-xl p-0 sm:p-6 overflow-y-auto">
       
       {/* Modal Card */}
-      <div className="relative w-full max-w-5xl bg-[#0a0d18] border border-cyan-500/30 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-5xl bg-[#0d0f17] border-t sm:border border-neutral-800 rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[94vh] sm:max-h-[90vh]">
         
         {/* Header */}
-        <div className="p-5 sm:p-6 bg-gradient-to-r from-[#111628] to-[#0d1020] border-b border-slate-800 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
+        <div className="p-3.5 sm:p-5 bg-[#11131c] border-b border-neutral-800 flex items-center justify-between gap-2 sm:gap-4">
+          <div className="flex items-center gap-2.5 sm:gap-4 min-w-0 flex-1">
             <button
               onClick={closeDownload}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold transition-colors cursor-pointer mr-1"
+              data-modal-close="true"
+              data-tv-focus="true"
+              tabIndex={0}
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-neutral-800 hover:bg-neutral-750 text-neutral-300 hover:text-white text-xs font-semibold transition-colors cursor-pointer mr-1"
               title="Back"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -190,44 +211,39 @@ export default function DownloadModal() {
             <img
               src={media.poster || 'https://images.metahub.space/poster/small/default.jpg'}
               alt={media.name}
-              className="w-14 h-20 object-cover rounded-xl border border-cyan-500/20 shadow-lg flex-shrink-0"
+              className="w-10 h-14 sm:w-12 sm:h-16 object-cover rounded-xl border border-neutral-800 shadow-md flex-shrink-0"
               onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=100&q=80'; }}
             />
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-                  Vegamovies / HDHub4u Engine
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
+                <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase bg-neutral-800 text-[var(--color-accent)] border border-neutral-700 truncate">
+                  Download Engine
                 </span>
-                <span className="text-xs text-slate-400 font-medium">
+                <span className="text-[10px] sm:text-xs text-neutral-400 font-medium">
                   {media.year} • {isSeries ? 'Series' : 'Movie'}
                 </span>
               </div>
-              <h2 className="text-lg sm:text-2xl font-black text-white tracking-tight">
-                {media.name} — Direct Download Hub
+              <h2 className="text-sm sm:text-xl font-bold text-white tracking-tight truncate">
+                {media.name}
               </h2>
-              <p className="text-xs text-slate-400 hidden sm:block">
-                {isSeries 
-                  ? `Whole Season Batch ZIP packs & multi-quality downloads for Season ${currentSeason}` 
-                  : '4K, 1080p, 720p & Dual Audio magnets with seed health indicators.'}
-              </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
             <button
               onClick={() => {
                 closeDownload();
                 openStream(media, currentSeason, currentEpisode);
               }}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 text-xs font-semibold transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-xl bg-neutral-800 hover:bg-neutral-750 text-neutral-200 border border-neutral-700 text-xs font-semibold transition-colors cursor-pointer"
             >
-              <Play className="w-3.5 h-3.5 fill-purple-300" />
+              <Play className="w-3.5 h-3.5 fill-current" />
               <span>Stream Instead</span>
             </button>
 
             <button
               onClick={closeDownload}
-              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+              className="p-1.5 sm:p-2 rounded-xl bg-neutral-800 hover:bg-neutral-750 text-neutral-400 hover:text-white transition-colors cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -238,24 +254,22 @@ export default function DownloadModal() {
         {isSeries && (
           <div className="space-y-0">
             {/* Whole Season ZIP Download Showcase Card */}
-            <div className="p-4 sm:p-5 bg-gradient-to-r from-purple-950/40 via-[#101426] to-cyan-950/40 border-b border-cyan-500/30 flex items-center justify-between gap-4 flex-wrap">
-              <div className="flex items-center gap-3.5">
-                <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-purple-600 to-cyan-500 p-0.5 shadow-lg shadow-purple-600/25 flex-shrink-0">
-                  <div className="w-full h-full bg-[#0a0d18] rounded-2xl flex items-center justify-center">
-                    <FileArchive className="w-5 h-5 text-cyan-400" />
-                  </div>
+            <div className="p-4 sm:p-5 bg-neutral-900 border-b border-neutral-800 flex items-center justify-between gap-4 flex-wrap">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-neutral-800 border border-neutral-700 flex items-center justify-center text-[var(--color-accent)] flex-shrink-0">
+                  <FileArchive className="w-5 h-5" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="text-sm sm:text-base font-black text-white">
+                    <h3 className="text-sm sm:text-base font-semibold text-white">
                       Download Whole Season {currentSeason} on a ZIP File
                     </h3>
-                    <span className="text-[10px] font-extrabold uppercase bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-full">
-                      All Episodes ZIP
+                    <span className="text-[10px] font-semibold uppercase bg-neutral-800 text-[var(--color-accent)] border border-neutral-700 px-2 py-0.5 rounded-md">
+                      Batch ZIP
                     </span>
                   </div>
-                  <p className="text-xs text-slate-400 mt-0.5">
-                    Bundles 1-click batch launcher, complete season torrents, all episode shortcuts, and offline player portal into one <strong>.zip file</strong>.
+                  <p className="text-xs text-neutral-400 mt-0.5">
+                    Bundles batch launcher, complete season torrents, and offline player portal into one <strong>.zip file</strong>.
                   </p>
                 </div>
               </div>
@@ -264,7 +278,7 @@ export default function DownloadModal() {
                 <button
                   onClick={handleDownloadSeasonZip}
                   disabled={zipping}
-                  className="flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white font-extrabold text-xs shadow-xl shadow-purple-600/30 hover:scale-105 transition-all duration-200"
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-neutral-200 text-neutral-950 font-semibold text-xs transition-colors cursor-pointer"
                 >
                   <ArrowDownToLine className={`w-4 h-4 ${zipping ? 'animate-bounce' : ''}`} />
                   <span>{zipping ? 'Building ZIP Archive...' : `Download Season ${currentSeason} ZIP`}</span>
@@ -273,11 +287,11 @@ export default function DownloadModal() {
                 {topSeasonPack && (
                   <button
                     onClick={() => handleLaunchTorrent(topSeasonPack)}
-                    className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#141829] hover:bg-[#1f253f] border border-cyan-500/40 text-cyan-300 font-semibold text-xs transition-colors"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-neutral-800 hover:bg-neutral-750 border border-neutral-700 text-neutral-200 font-medium text-xs transition-colors cursor-pointer"
                     title="Download all episodes into a single folder in your torrent client"
                   >
-                    <Download className="w-4 h-4 text-cyan-400" />
-                    <span>Launch Season Batch Torrent</span>
+                    <Download className="w-4 h-4 text-neutral-300" />
+                    <span>Launch Torrent Pack</span>
                   </button>
                 )}
               </div>

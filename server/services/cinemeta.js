@@ -53,33 +53,44 @@ export async function fetchCatalog(type = 'movie', genre = 'all', page = 1) {
   if (cached) return cached;
 
   try {
-    let url = `${BASE_URL}/catalog/${type}/top.json`;
+    let metas = [];
 
-    if (genre && genre !== 'all' && genre !== 'bollywood') {
-      url = `${BASE_URL}/catalog/${type}/top/genre=${encodeURIComponent(genre)}.json`;
-    } else if (genre === 'bollywood') {
-      // For Bollywood/Indian cinema search
-      url = `${BASE_URL}/catalog/${type}/top/search=hindi.json`;
-    }
-
-    const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' }, signal: AbortSignal.timeout(6000) });
-    const data = await res.json();
-    let metas = (data.metas || []).map(m => ({
-      ...m,
-      type: m.type || type
-    }));
-
-    // If bollywood requested and we want more rich Indian titles
-    if (genre === 'bollywood' && metas.length < 10) {
+    if (genre === 'bollywood') {
+      // For Bollywood & Dual Audio Hindi cinema
       try {
-        const extraRes = await fetch(`${BASE_URL}/catalog/${type}/top/search=bollywood.json`, { signal: AbortSignal.timeout(4000) });
-        const extraData = await extraRes.json();
-        if (extraData.metas) {
-          metas = [...metas, ...extraData.metas.map(m => ({ ...m, type: m.type || type }))];
+        const [resHindi, resBolly, resSeries] = await Promise.all([
+          fetch(`${BASE_URL}/catalog/movie/top/search=hindi.json`, { headers: { 'User-Agent': 'Mozilla/5.0' }, signal: AbortSignal.timeout(6000) }).then(r => r.json()).catch(() => ({ metas: [] })),
+          fetch(`${BASE_URL}/catalog/movie/top/search=bollywood.json`, { headers: { 'User-Agent': 'Mozilla/5.0' }, signal: AbortSignal.timeout(6000) }).then(r => r.json()).catch(() => ({ metas: [] })),
+          fetch(`${BASE_URL}/catalog/series/top/search=hindi.json`, { headers: { 'User-Agent': 'Mozilla/5.0' }, signal: AbortSignal.timeout(6000) }).then(r => r.json()).catch(() => ({ metas: [] }))
+        ]);
+
+        const combined = [
+          ...(resHindi.metas || []).map(m => ({ ...m, type: 'movie' })),
+          ...(resBolly.metas || []).map(m => ({ ...m, type: 'movie' })),
+          ...(resSeries.metas || []).map(m => ({ ...m, type: 'series' }))
+        ];
+
+        const seen = new Set();
+        for (const item of combined) {
+          if (!seen.has(item.id)) {
+            seen.add(item.id);
+            metas.push(item);
+          }
         }
       } catch (e) {
-        // ignore fallback error
+        console.error('Error fetching bollywood items:', e.message);
       }
+    } else {
+      let url = `${BASE_URL}/catalog/${type}/top.json`;
+      if (genre && genre !== 'all') {
+        url = `${BASE_URL}/catalog/${type}/top/genre=${encodeURIComponent(genre)}.json`;
+      }
+      const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' }, signal: AbortSignal.timeout(6000) });
+      const data = await res.json();
+      metas = (data.metas || []).map(m => ({
+        ...m,
+        type: m.type || type
+      }));
     }
 
     setCache(cacheKey, metas);
@@ -198,4 +209,24 @@ export async function fetchMeta(type, id) {
     return null;
   }
 }
+
+export async function fetchRecommendations(type = 'movie', id) {
+  const cacheKey = `recommendations_${type}_${id}`;
+  const cached = getCached(cacheKey);
+  if (cached) return cached;
+
+  try {
+    const meta = await fetchMeta(type, id);
+    const genre = (meta?.genres && meta.genres.length > 0) ? meta.genres[0] : 'all';
+    const catalog = await fetchCatalog(type, genre, 1);
+    const list = Array.isArray(catalog) ? catalog : (catalog?.items || []);
+    const items = list.filter(item => item.id !== id).slice(0, 10);
+    setCache(cacheKey, items);
+    return items;
+  } catch (err) {
+    console.error('Error fetching recommendations:', err.message);
+    return [];
+  }
+}
+
 

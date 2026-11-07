@@ -1,5 +1,5 @@
 @echo off
-title Open Localhost 5000
-cd /d "D:\XENMOVIES"
-start http://localhost:5000
+
+
+start https://xenmovies.antideploy.app
 npm start

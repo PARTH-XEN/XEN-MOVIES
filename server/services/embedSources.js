@@ -7,52 +7,60 @@ export function getEmbedServers(type, id, season = 1, episode = 1, tmdbId = null
 
   return [
     {
+      id: 'vidlink',
+      name: 'VidLink 4K',
+      badge: '4K UHD',
+      url: isMovie 
+        ? `https://vidlink.pro/movie/${effectiveTmdbId || effectiveImdbId}?primaryColor=f59e0b&secondaryColor=10b981&iconColor=f59e0b`
+        : `https://vidlink.pro/tv/${effectiveTmdbId || effectiveImdbId}/${s}/${e}?primaryColor=f59e0b&secondaryColor=10b981&iconColor=f59e0b`
+    },
+    {
+      id: 'vidsrc_su',
+      name: 'VidSrc Ultra',
+      badge: '4K Ultra',
+      url: isMovie
+        ? `https://vidsrc.su/embed/movie/${effectiveImdbId}`
+        : `https://vidsrc.su/embed/tv/${effectiveTmdbId || effectiveImdbId}/${s}/${e}`
+    },
+    {
+      id: 'autoembed',
+      name: 'AutoEmbed 4K',
+      badge: '4K Cloud CDN',
+      url: isMovie
+        ? `https://autoembed.me/movie/imdb/${effectiveImdbId}`
+        : `https://autoembed.me/tv/imdb/${effectiveImdbId}-${s}-${e}`
+    },
+    {
       id: '2embed',
-      name: '2Embed VIP [Auto-Play / Subs]',
-      badge: 'High Reliability',
+      name: '2Embed VIP',
+      badge: 'Auto-Play',
       url: isMovie
         ? `https://www.2embed.cc/embed/${effectiveImdbId}`
-        : `https://www.2embed.cc/embedtv/${effectiveImdbId}&s=${s}&e=${e}`
+        : `https://www.2embed.cc/embedtv/${effectiveImdbId}?s=${s}&e=${e}`
     },
     {
       id: 'vidsrc_pm',
-      name: 'VidSrc PM [HD Direct]',
+      name: 'VidSrc PM',
       badge: 'Multi-Audio',
       url: isMovie
         ? `https://vidsrc.pm/embed/movie/${effectiveImdbId}`
         : `https://vidsrc.pm/embed/tv/${effectiveImdbId}/${s}/${e}`
     },
     {
-      id: 'vidlink',
-      name: 'VidLink Pro [4K UHD]',
-      badge: 'Ultra HD',
-      url: isMovie 
-        ? `https://vidlink.pro/movie/${effectiveImdbId}?primaryColor=a855f7&secondaryColor=06b6d4&iconColor=38bdf8`
-        : `https://vidlink.pro/tv/${effectiveTmdbId}/${s}/${e}?primaryColor=a855f7&secondaryColor=06b6d4&iconColor=38bdf8`
-    },
-    {
-      id: 'autoembed',
-      name: 'AutoEmbed [Cloud CDN]',
+      id: 'movies111',
+      name: '111Movies',
       badge: 'Fast Mirror',
       url: isMovie
-        ? `https://autoembed.co/movie/imdb/${effectiveImdbId}`
-        : `https://autoembed.co/tv/imdb/${effectiveImdbId}-${s}-${e}`
+        ? `https://111movies.com/movie/${effectiveImdbId}`
+        : `https://111movies.com/tv/${effectiveTmdbId || effectiveImdbId}/${s}/${e}`
     },
     {
-      id: 'smashystream',
-      name: 'Smashy Stream',
-      badge: 'High Speed',
-      url: isMovie
-        ? `https://player.smashy.stream/movie/${effectiveImdbId}`
-        : `https://player.smashy.stream/tv/${effectiveImdbId}?s=${s}&e=${e}`
-    },
-    {
-      id: 'multiembed',
-      name: 'MultiEmbed Global',
+      id: 'vidsrc_work',
+      name: 'VidSrc Work',
       badge: 'Universal Backup',
       url: isMovie
-        ? `https://multiembed.mov/?video_id=${effectiveImdbId}`
-        : `https://multiembed.mov/?video_id=${effectiveImdbId}&s=${s}&e=${e}`
+        ? `https://vidsrc.work/embed/movie/${effectiveTmdbId || effectiveImdbId}`
+        : `https://vidsrc.work/embed/tv/${effectiveTmdbId || effectiveImdbId}/${s}/${e}`
     }
   ];
 }

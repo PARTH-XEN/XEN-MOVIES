@@ -117,36 +117,69 @@ export async function resolveCloudstreamSources(type, id, season = 1, episode = 
 }
 
 // Generates Cloudstream-compatible Repository Manifest
-export function getCloudstreamRepo(baseUrl = 'http://localhost:5000') {
+export function getCloudstreamRepo(baseUrl = 'https://xenmovies.antideploy.app') {
   return {
-    name: 'XENMOVIES Cloudstream Provider Hub',
-    description: 'High-speed ad-free movies, TV shows, and Vegamovies Dual Audio streams',
+    name: 'XENMOVIES Official Repository',
+    description: 'Official XENMOVIES companion repository for Cloudstream 3. Stream 4K Cinema, Multi-Audio Hindi, Netflix Series, Anime & Vegamovies with zero ads.',
     manifestVersion: 1,
     pluginVersion: 1,
-    url: `${baseUrl}/api/cloudstream/repo.json`,
-    iconUrl: `${baseUrl}/favicon.ico`,
+    url: `${baseUrl}/repo.json`,
+    rawUrl: `${baseUrl}/repo.json`,
+    iconUrl: `${baseUrl}/LOGO/XEN-MOVIES.png`,
+    pluginLists: [
+      `${baseUrl}/plugins.json`,
+      'https://raw.githubusercontent.com/hexated/cloudstream-extensions-hexated/builds/plugins.json',
+      'https://raw.githubusercontent.com/stormunbl/Stormunbl-Repository/builds/plugins.json'
+    ],
     plugins: [
       {
         id: 'xenmovies.sorastream',
-        name: 'XENMOVIES SoraStream Provider',
+        name: 'XENMOVIES SoraStream 4K',
+        internalName: 'XENMOVIES_SoraStream',
         version: 1,
-        author: 'Antigravity',
-        description: 'Multi-server streaming engine with subtitles and 4K support',
+        author: 'XENMOVIES Team',
+        description: 'Multi-server ultra-fast streaming engine with subtitles and 4K HDR support',
         status: 1,
+        tvTypes: ['movie', 'tv', 'anime'],
         types: ['Movie', 'TvSeries', 'Anime', 'Cartoon'],
-        apiVersion: 1
+        apiVersion: 1,
+        iconUrl: `${baseUrl}/LOGO/XEN-MOVIES.png`,
+        url: `${baseUrl}/plugins/sorastream.cs3`
       },
       {
         id: 'xenmovies.vegamovies',
         name: 'XENMOVIES Vegamovies Engine',
+        internalName: 'XENMOVIES_Vegamovies',
         version: 1,
-        author: 'Antigravity',
-        description: 'Hindi Dubbed and Dual Audio movie stream and batch downloads',
+        author: 'XENMOVIES Team',
+        description: 'Hindi Dubbed and Dual Audio movie streaming and direct batch downloads',
         status: 1,
+        tvTypes: ['movie', 'tv'],
         types: ['Movie', 'TvSeries', 'AsianDrama', 'Bollywood'],
-        apiVersion: 1
+        apiVersion: 1,
+        iconUrl: `${baseUrl}/LOGO/XEN-MOVIES.png`,
+        url: `${baseUrl}/plugins/vegamovies.cs3`
+      },
+      {
+        id: 'xenmovies.anime',
+        name: 'XENMOVIES Anime & Series Hub',
+        internalName: 'XENMOVIES_AnimeHub',
+        version: 1,
+        author: 'XENMOVIES Team',
+        description: 'Subbed & Dubbed Anime and trending international television series',
+        status: 1,
+        tvTypes: ['anime', 'tv'],
+        types: ['Anime', 'TvSeries', 'Cartoon'],
+        apiVersion: 1,
+        iconUrl: `${baseUrl}/LOGO/XEN-MOVIES.png`,
+        url: `${baseUrl}/plugins/anime.cs3`
       }
     ]
   };
+}
+
+export function getCloudstreamPlugins(baseUrl = 'https://xenmovies.antideploy.app') {
+  const repo = getCloudstreamRepo(baseUrl);
+  return repo.plugins;
 }
 

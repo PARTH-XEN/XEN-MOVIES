@@ -1,30 +1,35 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { api } from '../services/api';
+import { spatialAudio, SOUND_PACKS } from '../utils/spatialAudio';
+import { triggerHaptic } from '../utils/haptics';
+import UIStyleSwitcher from './UIStyleSwitcher';
 import { 
   Settings, 
   Palette, 
   Server, 
   HardDrive, 
-  Sliders, 
   Check, 
-  Zap, 
-  Database,
-  ExternalLink,
-  Cloud,
-  Smartphone,
-  Copy
+  Volume2,
+  Play,
+  User,
+  LogIn,
+  LogOut,
+  ShieldCheck,
+  Sparkles,
+  Layout
 } from 'lucide-react';
 
 export default function SettingsTab() {
-  const { settings, setSettings, setTheme, addToast } = useApp();
+  const { theme, settings, setSettings, setTheme, addToast, user, openAuthModal, logoutUser } = useApp();
+  const [activeSoundPack, setActiveSoundPack] = useState(spatialAudio.getSoundPack());
 
   const themes = [
-    { id: 'cyberpunk', name: 'Cyberpunk Neon', desc: 'Electric Violet, Neon Cyan, Obsidian', color: '#8b5cf6' },
-    { id: 'matrix', name: 'Matrix Emerald', desc: 'Hacker Green, Mint, Deep Pitch', color: '#10b981' },
-    { id: 'crimson', name: 'Crimson OLED', desc: 'Cinematic Red, Rose Glow, Velvet', color: '#f43f5e' },
-    { id: 'gold', name: 'Solar Amber', desc: 'Warm Amber, Luxury Gold, Carbon', color: '#f59e0b' },
-    { id: 'ocean', name: 'Glacier Blue', desc: 'Deep Ocean Blue, Electric Sky, Slate', color: '#0284c7' }
+    { id: 'visionos', name: 'VisionOS Spatial', desc: 'Spatial 3D Glass & Specular Depth', color: '#6366f1' },
+    { id: 'netflix', name: 'Netflix Cinema', desc: 'Obsidian Pitch Black & Red Accent', color: '#E50914' },
+    { id: 'cyberpunk', name: 'Cyberpunk 2077', desc: 'Night City HUD & Cyan Grid', color: '#00f0ff' },
+    { id: 'nordic', name: 'Nordic Minimal', desc: 'Clean Zen Monochrome Slate', color: '#eceff4' },
+    { id: 'synthwave', name: 'Anime Synthwave', desc: 'Retro Arcade & Neon Pink Glow', color: '#ff71ce' }
   ];
 
   const handleUpdate = async (key, value) => {
@@ -39,56 +44,149 @@ export default function SettingsTab() {
     }
   };
 
-  const testMagnet = () => {
-    const testUri = 'magnet:?xt=urn:btih:2849211f150e966ef7924f43aec22727a644e10d&dn=Inception.Test.Launch';
-    window.location.href = testUri;
-    addToast('Testing magnet launch in Windows...', 'info');
+  const handleSelectSoundPack = (packId) => {
+    const updated = spatialAudio.setSoundPack(packId);
+    setActiveSoundPack(updated);
+    triggerHaptic('medium');
+    const packObj = SOUND_PACKS.find(p => p.id === packId);
+    addToast(`Selected: ${packObj?.name || packId}`, 'success');
   };
 
   return (
-    <div className="max-w-4xl space-y-8 select-none">
+    <div className="max-w-4xl space-y-6 sm:space-y-8 select-none pb-20">
       
       {/* Header */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-white flex items-center gap-3">
-          <Settings className="w-7 h-7 text-purple-400" />
+        <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2.5">
+          <Settings className="w-6 h-6 text-[var(--color-accent)]" />
           <span>Settings & Preferences</span>
         </h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-1">
-          Customize your local streaming engine, preferred resolutions, and UI aesthetic
+        <p className="text-xs text-neutral-400 mt-1">
+          Manage your personal account, select UI design modes, customize sound packs, and configure streaming nodes.
         </p>
       </div>
 
-      {/* Visual Theme Section */}
-      <div className="p-6 rounded-3xl bg-[#0e1222] border border-slate-800 space-y-4">
-        <div className="flex items-center gap-2.5 text-sm font-bold text-slate-200">
-          <Palette className="w-4 h-4 text-purple-400" />
-          <span>Aesthetic Visual Theme</span>
+      {/* User Account / Profile Card */}
+      <div className="p-5 sm:p-6 rounded-2xl bg-neutral-900 border border-neutral-800 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 text-sm font-semibold text-white">
+            <User className="w-4 h-4 text-[var(--color-accent)]" />
+            <span>Account & Cloud Sync</span>
+          </div>
+          {user ? (
+            <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+              <ShieldCheck className="w-3.5 h-3.5" /> Synchronized
+            </span>
+          ) : (
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30">
+              Guest Mode
+            </span>
+          )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {user ? (
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl bg-neutral-950 border border-neutral-800">
+            <div className="flex items-center gap-3">
+              <img
+                src={user.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(user.name)}`}
+                alt={user.name}
+                className="w-10 h-10 rounded-xl bg-neutral-800 border border-neutral-700 object-cover"
+              />
+              <div>
+                <h3 className="font-semibold text-white text-sm">{user.name}</h3>
+                <p className="text-xs text-neutral-400">{user.email}</p>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                spatialAudio.playClick();
+                logoutUser();
+              }}
+              className="px-3.5 py-1.5 rounded-lg bg-neutral-800 hover:bg-rose-900/40 border border-neutral-700 hover:border-rose-800 text-rose-300 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Sign Out</span>
+            </button>
+          </div>
+        ) : (
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl bg-neutral-950 border border-neutral-800">
+            <div>
+              <h3 className="font-semibold text-white text-sm">
+                Sign In or Register
+              </h3>
+              <p className="text-xs text-neutral-400 mt-1 max-w-md">
+                Create an account to keep your personal watchlist, downloads history, and progress saved forever across any device.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <button
+                onClick={() => {
+                  spatialAudio.playClick();
+                  openAuthModal('signup');
+                }}
+                className="flex-1 sm:flex-initial px-4 py-2 rounded-lg bg-white hover:bg-neutral-200 text-neutral-950 font-semibold text-xs transition-colors cursor-pointer"
+              >
+                Sign Up
+              </button>
+              <button
+                onClick={() => {
+                  spatialAudio.playClick();
+                  openAuthModal('login');
+                }}
+                className="flex-1 sm:flex-initial px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-750 border border-neutral-700 text-neutral-200 font-semibold text-xs transition-colors cursor-pointer"
+              >
+                Sign In
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Selectable UI Interface Modes */}
+      <div className="p-5 sm:p-6 rounded-2xl bg-neutral-900 border border-neutral-800 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 text-sm font-semibold text-white">
+            <Layout className="w-4 h-4 text-[var(--color-accent)]" />
+            <span>Selectable Visual UI Interfaces (5 Styles)</span>
+          </div>
+        </div>
+        <p className="text-xs text-neutral-400">
+          Switch between curated styles: Apple VisionOS Spatial glass, Netflix pitch-black obsidian cinema, Cyberpunk 2077 HUD, Nordic minimal slate, or Anime Synthwave.
+        </p>
+
+        <UIStyleSwitcher />
+      </div>
+
+      {/* Accent Color Palette */}
+      <div className="p-5 sm:p-6 rounded-2xl bg-neutral-900 border border-neutral-800 space-y-4">
+        <div className="flex items-center gap-2 text-sm font-semibold text-white">
+          <Palette className="w-4 h-4 text-[var(--color-accent)]" />
+          <span>Accent Color Theme (5 Themes)</span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
           {themes.map((t) => {
-            const isSelected = settings.theme === t.id;
+            const isSelected = (theme || settings?.theme || 'cyberpunk') === t.id;
             return (
               <div
                 key={t.id}
                 onClick={() => setTheme(t.id)}
-                className={`p-4 rounded-2xl cursor-pointer transition-all border flex items-center justify-between ${
+                className={`p-3.5 rounded-xl cursor-pointer transition-colors border flex items-center justify-between ${
                   isSelected
-                    ? 'bg-purple-600/15 border-purple-500 shadow-lg shadow-purple-900/30 ring-1 ring-purple-500'
-                    : 'bg-[#12162a] border-slate-800 hover:border-slate-700 hover:bg-[#181d36]'
+                    ? 'bg-neutral-800 border-neutral-500 shadow-md ring-1 ring-white/20'
+                    : 'bg-neutral-950 border-neutral-800 hover:border-neutral-700 hover:bg-neutral-850'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <div
-                    className="w-8 h-8 rounded-full shadow-md flex items-center justify-center text-white"
+                    className="w-7 h-7 rounded-full shadow-sm flex items-center justify-center text-white"
                     style={{ backgroundColor: t.color }}
                   >
-                    {isSelected && <Check className="w-4 h-4 stroke-[3]" />}
+                    {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
                   </div>
                   <div>
-                    <div className="font-bold text-sm text-slate-200">{t.name}</div>
-                    <div className="text-[11px] text-slate-400">{t.desc}</div>
+                    <div className="font-semibold text-xs sm:text-sm text-neutral-200">{t.name}</div>
+                    <div className="text-[10px] text-neutral-400">{t.desc}</div>
                   </div>
                 </div>
               </div>
@@ -97,41 +195,82 @@ export default function SettingsTab() {
         </div>
       </div>
 
-      {/* Streaming Server Defaults */}
-      <div className="p-6 rounded-3xl bg-[#0e1222] border border-slate-800 space-y-4">
-        <div className="flex items-center gap-2.5 text-sm font-bold text-slate-200">
-          <Server className="w-4 h-4 text-cyan-400" />
-          <span>Streaming Node Settings</span>
+      {/* UI Tap Sound Types Section */}
+      <div className="p-5 sm:p-6 rounded-2xl bg-neutral-900 border border-neutral-800 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 text-sm font-semibold text-white">
+            <Volume2 className="w-4 h-4 text-[var(--color-accent)]" />
+            <span>UI Tap Sound Profiles (8 Sound Packs)</span>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <p className="text-xs text-neutral-400">
+          Choose feedback sounds for button clicks and navigation. Tap to preview and select.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+          {SOUND_PACKS.map((pack) => {
+            const isSelected = activeSoundPack === pack.id;
+            return (
+              <div
+                key={pack.id}
+                onClick={() => handleSelectSoundPack(pack.id)}
+                className={`p-3 rounded-xl cursor-pointer transition-colors border flex items-center justify-between ${
+                  isSelected
+                    ? 'bg-neutral-800 border-neutral-500 shadow-md ring-1 ring-white/20'
+                    : 'bg-neutral-950 border-neutral-800 hover:border-neutral-700 hover:bg-neutral-850'
+                }`}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="text-lg">{pack.icon}</span>
+                  <div className="truncate">
+                    <div className="font-medium text-xs text-neutral-200 truncate">{pack.name}</div>
+                    <div className="text-[10px] text-neutral-400 truncate">{pack.desc}</div>
+                  </div>
+                </div>
+                {isSelected && <Check className="w-3.5 h-3.5 text-white flex-shrink-0" />}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Streaming Server Defaults */}
+      <div className="p-5 sm:p-6 rounded-2xl bg-neutral-900 border border-neutral-800 space-y-4">
+        <div className="flex items-center gap-2 text-sm font-semibold text-white">
+          <Server className="w-4 h-4 text-[var(--color-accent)]" />
+          <span>Streaming Server Settings</span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">
+            <label className="block text-xs font-semibold text-neutral-400 mb-1.5 uppercase">
               Default Streaming Server
             </label>
             <select
               value={settings.preferred_server || 'vidlink'}
               onChange={(e) => handleUpdate('preferred_server', e.target.value)}
-              className="w-full bg-[#12162a] border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-purple-500"
+              className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-neutral-600"
             >
               <option value="vidlink">VidLink Pro (4K / Ultra Fast / Subtitles)</option>
               <option value="2embed">2Embed VIP (Multi-Language Subtitles)</option>
-              <option value="vidsrc_icu">VidSrc ICU (Dual Audio & High Bandwidth)</option>
-              <option value="autoembed">AutoEmbed Cloud (Auto Server Switcher)</option>
+              <option value="vidsrc_pm">VidSrc PM (Dual Audio & High Bandwidth)</option>
+              <option value="autoembed">AutoEmbed Cloud (Auto Mirror Switcher)</option>
               <option value="smashystream">SmashyStream (High Speed Mirror)</option>
+              <option value="multiembed">MultiEmbed Global</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">
-              Audio Track Priority
+            <label className="block text-xs font-semibold text-neutral-400 mb-1.5 uppercase">
+              Audio Priority
             </label>
             <select
               value={settings.preferred_audio || 'dual_audio'}
               onChange={(e) => handleUpdate('preferred_audio', e.target.value)}
-              className="w-full bg-[#12162a] border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-purple-500"
+              className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-neutral-600"
             >
-              <option value="dual_audio">Dual Audio / Hindi Dubbed (Vegamovies Special)</option>
+              <option value="dual_audio">Dual Audio / Hindi Dubbed Special</option>
               <option value="original">Original Audio (English / Multi)</option>
               <option value="any">Any Available</option>
             </select>
@@ -139,107 +278,42 @@ export default function SettingsTab() {
         </div>
       </div>
 
-      {/* Download & Torrent Client Preferences */}
-      <div className="p-6 rounded-3xl bg-[#0e1222] border border-slate-800 space-y-4">
-        <div className="flex items-center gap-2.5 text-sm font-bold text-slate-200">
-          <HardDrive className="w-4 h-4 text-emerald-400" />
-          <span>Torrent & Download Client Preferences</span>
+      {/* Download Preferences */}
+      <div className="p-5 sm:p-6 rounded-2xl bg-neutral-900 border border-neutral-800 space-y-4">
+        <div className="flex items-center gap-2 text-sm font-semibold text-white">
+          <HardDrive className="w-4 h-4 text-[var(--color-accent)]" />
+          <span>Download & Magnet Preferences</span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">
-              Preferred Download Quality
+            <label className="block text-xs font-semibold text-neutral-400 mb-1.5 uppercase">
+              Magnet Action
             </label>
             <select
-              value={settings.preferred_quality || '1080p'}
-              onChange={(e) => handleUpdate('preferred_quality', e.target.value)}
-              className="w-full bg-[#12162a] border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-purple-500"
+              value={settings.torrent_client_action || 'open_magnet'}
+              onChange={(e) => handleUpdate('torrent_client_action', e.target.value)}
+              className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-neutral-600"
             >
-              <option value="4k">4K Ultra HD (2160p HDR / AV1 / HEVC)</option>
-              <option value="1080p">1080p Full HD (Dual Audio 10-Bit)</option>
-              <option value="720p">720p HD (High Speed Compact)</option>
-              <option value="480p">480p SD (Mobile / Low Bandwidth)</option>
+              <option value="open_magnet">Open in Installed BitTorrent Client</option>
+              <option value="copy_magnet">Copy Magnet Link to Clipboard Only</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">
-              Torrent Client Integration
+            <label className="block text-xs font-semibold text-neutral-400 mb-1.5 uppercase">
+              Preferred Resolution
             </label>
-            <button
-              onClick={testMagnet}
-              className="w-full flex items-center justify-center gap-2 bg-[#12162a] hover:bg-slate-800 border border-emerald-500/30 text-emerald-300 font-semibold rounded-xl px-3.5 py-2.5 text-xs transition-colors"
+            <select
+              value={settings.preferred_quality || '1080p'}
+              onChange={(e) => handleUpdate('preferred_quality', e.target.value)}
+              className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-neutral-600"
             >
-              <Zap className="w-3.5 h-3.5" />
-              <span>Test 1-Click Torrent Magnet Launch</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Cloudstream 3 Integration Section */}
-      <div className="p-6 rounded-3xl bg-gradient-to-r from-purple-950/30 via-[#0e1222] to-cyan-950/30 border border-purple-500/30 space-y-4">
-        <div className="flex items-center justify-between flex-wrap gap-2">
-          <div className="flex items-center gap-2.5 text-sm font-bold text-slate-100">
-            <Cloud className="w-5 h-5 text-cyan-400" />
-            <span>Cloudstream 3 Mobile & Android TV Integration</span>
-          </div>
-          <span className="text-[10px] font-extrabold uppercase bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2.5 py-0.5 rounded-full">
-            Cloudstream API Online
-          </span>
-        </div>
-
-        <p className="text-xs text-slate-400 leading-relaxed">
-          Use XENMOVIES as an official custom provider repository inside the <strong>Cloudstream 3</strong> app on Android phones, tablets, or Android TVs for 100% ad-free native playback!
-        </p>
-
-        <div className="p-4 rounded-2xl bg-[#0a0d18] border border-slate-800 space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-400">Cloudstream Repository URL:</span>
-            <button
-              onClick={() => {
-                const repoUrl = `${window.location.origin}/api/cloudstream/repo.json`;
-                navigator.clipboard.writeText(repoUrl);
-                addToast('Copied Cloudstream Repository URL!', 'success');
-              }}
-              className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-300 text-xs font-bold border border-cyan-500/30 transition-colors"
-            >
-              <Copy className="w-3.5 h-3.5" />
-              <span>Copy Repo URL</span>
-            </button>
-          </div>
-          <div className="font-mono text-xs text-purple-300 break-all select-all bg-slate-900/80 p-2.5 rounded-xl border border-purple-500/20">
-            {typeof window !== 'undefined' ? `${window.location.origin}/api/cloudstream/repo.json` : 'http://localhost:5000/api/cloudstream/repo.json'}
-          </div>
-        </div>
-
-        <div className="text-[11px] text-slate-400 space-y-1">
-          <div className="font-bold text-slate-300">How to add in Cloudstream 3:</div>
-          <div>1. Open Cloudstream 3 &gt; Go to <strong>Settings</strong> &gt; <strong>Extensions</strong>.</div>
-          <div>2. Click <strong>Add Repository</strong> &gt; Paste the URL above.</div>
-          <div>3. Install the <strong>XENMOVIES SoraStream &amp; Vegamovies</strong> providers to stream directly!</div>
-        </div>
-      </div>
-
-      {/* Local System & SQLite Diagnostics */}
-      <div className="p-6 rounded-3xl bg-[#080b16] border border-slate-800/80 space-y-3">
-        <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
-          <Database className="w-3.5 h-3.5 text-purple-400" />
-          <span>Local System Environment</span>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-          <div className="p-3 rounded-xl bg-[#0e1222] border border-slate-800">
-            <span className="text-slate-500 block mb-0.5">Database</span>
-            <span className="text-slate-200 font-mono">SQLite (xenmovies.db)</span>
-          </div>
-          <div className="p-3 rounded-xl bg-[#0e1222] border border-slate-800">
-            <span className="text-slate-500 block mb-0.5">Local Port</span>
-            <span className="text-slate-200 font-mono">http://localhost:5000</span>
-          </div>
-          <div className="p-3 rounded-xl bg-[#0e1222] border border-slate-800">
-            <span className="text-slate-500 block mb-0.5">Storage Mode</span>
-            <span className="text-emerald-400 font-bold">100% Offline & Private</span>
+              <option value="2160p">4K UHD (2160p HDR)</option>
+              <option value="1080p">Full HD (1080p HEVC 10-bit)</option>
+              <option value="720p">HD (720p Fast Download)</option>
+              <option value="all">Show All Qualities</option>
+            </select>
           </div>
         </div>
       </div>
@@ -247,4 +321,3 @@ export default function SettingsTab() {
     </div>
   );
 }
-

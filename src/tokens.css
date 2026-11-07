@@ -1,0 +1,191 @@
+:root {
+  color-scheme: dark;
+  --space-3xs: 2px; --space-2xs: 4px; --space-xs: 8px; --space-sm: 12px; --space-md: 16px; --space-lg: 24px; --space-xl: 40px; --space-2xl: 64px; --space-3xl: 96px; --space-4xl: 144px;
+  --text-xs: 0.8125rem; --text-sm: 0.875rem; --text-md: 1rem; --text-lg: 1.125rem; --text-xl: 1.25rem; --text-2xl: 1.5rem; --text-3xl: 1.875rem;
+  --text-display-s: clamp(1.5rem, 2vw + 0.5rem, 2rem); --text-display: clamp(1.75rem, 2.5vw + 0.5rem, 2.375rem);
+  --text-section: clamp(1.125rem, 1vw + 0.5rem, 1.375rem); --text-title: 1.125rem; --text-lead: 1rem;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); --ease-in: cubic-bezier(0.7, 0, 0.84, 0); --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms; --dur-short: 220ms; --dur-long: 420ms;
+  --color-error: oklch(52% 0.19 27); --color-success: oklch(50% 0.12 150);
+  --container: 1440px; --gutter: 64px; --gap-columns: 32px; --section-gap-s: 120px; --section-gap: 144px; --section-gap-l: 176px;
+  --z-base: 1; --z-raised: 10; --z-dropdown: 100; --z-sticky: 200; --z-sticky-nav: 300; --z-modal: 400; --z-toast: 500; --z-tooltip: 600;
+  
+  /* Defaults */
+  --font-family: 'Outfit', sans-serif;
+  --color-paper: #090a0f;
+  --color-paper-2: #11131a;
+  --color-paper-3: #181b24;
+  --color-ink: #f3f4f6;
+  --color-ink-2: #d1d5db;
+  --color-muted: #9ca3af;
+  --color-rule: rgba(255, 255, 255, 0.08);
+  --color-rule-2: rgba(255, 255, 255, 0.14);
+  --radius-card: 20px;
+  --radius-pill: 9999px;
+  --rule-hair: 1px;
+  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.6);
+  --tracking-display: -0.015em;
+  --display-weight: 600;
+
+  /* Theme Defaults: VisionOS Spatial */
+  --color-accent: #6366f1;
+  --color-accent-deep: #4f46e5;
+  --color-accent-soft: rgba(99, 102, 241, 0.2);
+  --color-accent-ink: #ffffff;
+  --color-focus: #818cf8;
+  --theme-primary: #6366f1;
+  --theme-secondary: #a855f7;
+  --theme-accent: #ec4899;
+  --theme-gradient: linear-gradient(135deg, #6366f1, #a855f7);
+  --theme-border: rgba(99, 102, 241, 0.4);
+  --theme-shadow: rgba(99, 102, 241, 0.35);
+  --theme-bg: radial-gradient(circle at 20% 20%, #1e1b4b 0%, #0f172a 50%, #020617 100%);
+}
+
+/* ==============================================================
+   5 COMPREHENSIVE UI THEMES FROM USER SHOWCASE
+   ============================================================== */
+
+/* 1. VISIONOS SPATIAL */
+.theme-visionos,
+[data-theme="visionos"],
+[data-theme="vision-spatial"],
+[data-ui-mode="vision-spatial"] {
+  font-family: 'Outfit', sans-serif !important;
+  --font-family: 'Outfit', sans-serif;
+  --theme-bg: radial-gradient(circle at 20% 20%, #1e1b4b 0%, #0f172a 50%, #020617 100%);
+  --color-paper: #080a11;
+  --color-paper-2: rgba(255, 255, 255, 0.07);
+  --color-paper-3: rgba(255, 255, 255, 0.12);
+  --color-rule: rgba(255, 255, 255, 0.18);
+  --color-rule-2: rgba(255, 255, 255, 0.25);
+  --color-accent: #6366f1;
+  --color-accent-deep: #4f46e5;
+  --color-accent-soft: rgba(99, 102, 241, 0.22);
+  --color-focus: #818cf8;
+  --theme-primary: #6366f1;
+  --theme-secondary: #a855f7;
+  --theme-accent: #ec4899;
+  --theme-gradient: linear-gradient(135deg, #6366f1, #a855f7);
+  --theme-border: rgba(255, 255, 255, 0.2);
+  --theme-shadow: rgba(99, 102, 241, 0.35);
+  --radius-card: 24px;
+  --radius-pill: 9999px;
+  --shadow-card: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+/* 2. NETFLIX CINEMA (Obsidian) */
+.theme-netflix,
+[data-theme="netflix"],
+[data-theme="cinema-stream"],
+[data-theme="crimson"],
+[data-ui-mode="cinema-stream"] {
+  font-family: 'Inter', sans-serif !important;
+  --font-family: 'Inter', sans-serif;
+  --theme-bg: #141414;
+  --color-paper: #0e0e0e;
+  --color-paper-2: #181818;
+  --color-paper-3: #222222;
+  --color-rule: #282828;
+  --color-rule-2: #383838;
+  --color-accent: #E50914;
+  --color-accent-deep: #b80710;
+  --color-accent-soft: rgba(229, 9, 20, 0.2);
+  --color-focus: #f87171;
+  --theme-primary: #E50914;
+  --theme-secondary: #dc2626;
+  --theme-accent: #991b1b;
+  --theme-gradient: linear-gradient(135deg, #E50914, #991b1b);
+  --theme-border: #282828;
+  --theme-shadow: rgba(229, 9, 20, 0.4);
+  --radius-card: 6px;
+  --radius-pill: 4px;
+  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.85);
+}
+
+/* 3. CYBERPUNK 2077 (Sci-Fi HUD) */
+.theme-cyberpunk,
+[data-theme="cyberpunk"],
+[data-theme="cyberpunk-hud"],
+[data-theme="matrix"],
+[data-ui-mode="cyberpunk-hud"] {
+  font-family: 'Chakra Petch', sans-serif !important;
+  --font-family: 'Chakra Petch', sans-serif;
+  --theme-bg: #050b14;
+  --color-paper: #050b14;
+  --color-paper-2: rgba(10, 20, 35, 0.9);
+  --color-paper-3: rgba(15, 28, 48, 0.95);
+  --color-rule: rgba(0, 240, 255, 0.35);
+  --color-rule-2: rgba(0, 240, 255, 0.55);
+  --color-accent: #00f0ff;
+  --color-accent-deep: #0891b2;
+  --color-accent-soft: rgba(0, 240, 255, 0.2);
+  --color-focus: #ffe600;
+  --theme-primary: #00f0ff;
+  --theme-secondary: #ffe600;
+  --theme-accent: #06b6d4;
+  --theme-gradient: linear-gradient(135deg, #00f0ff, #ffe600);
+  --theme-border: #00f0ff;
+  --theme-shadow: rgba(0, 240, 255, 0.4);
+  --radius-card: 0px;
+  --radius-pill: 2px;
+  --shadow-card: 0 0 18px rgba(0, 240, 255, 0.25);
+}
+
+/* 4. NORDIC MINIMAL (Clean Zen) */
+.theme-nordic,
+[data-theme="nordic"],
+[data-theme="nordic-minimal"],
+[data-theme="ocean"],
+[data-ui-mode="nordic-minimal"] {
+  font-family: 'Space Grotesk', sans-serif !important;
+  --font-family: 'Space Grotesk', sans-serif;
+  --theme-bg: #121417;
+  --color-paper: #121417;
+  --color-paper-2: #1a1d23;
+  --color-paper-3: #242831;
+  --color-rule: #2e3440;
+  --color-rule-2: #3b4252;
+  --color-accent: #eceff4;
+  --color-accent-deep: #d8dee9;
+  --color-accent-soft: rgba(236, 239, 244, 0.16);
+  --color-focus: #88c0d0;
+  --theme-primary: #eceff4;
+  --theme-secondary: #88c0d0;
+  --theme-accent: #81a1c1;
+  --theme-gradient: linear-gradient(135deg, #eceff4, #88c0d0);
+  --theme-border: #2e3440;
+  --theme-shadow: rgba(236, 239, 244, 0.2);
+  --radius-card: 12px;
+  --radius-pill: 8px;
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* 5. ANIME SYNTHWAVE (Arcade Synth) */
+.theme-synthwave,
+[data-theme="synthwave"],
+[data-theme="anime-arcade"],
+[data-theme="gold"],
+[data-ui-mode="anime-arcade"] {
+  font-family: 'Orbitron', sans-serif !important;
+  --font-family: 'Orbitron', sans-serif;
+  --theme-bg: linear-gradient(185deg, #1a0b2e 0%, #11051e 50%, #090014 100%);
+  --color-paper: #090014;
+  --color-paper-2: rgba(30, 10, 50, 0.85);
+  --color-paper-3: rgba(45, 15, 75, 0.9);
+  --color-rule: rgba(255, 113, 206, 0.45);
+  --color-rule-2: rgba(1, 205, 254, 0.45);
+  --color-accent: #ff71ce;
+  --color-accent-deep: #d946ef;
+  --color-accent-soft: rgba(255, 113, 206, 0.25);
+  --color-focus: #01cdfe;
+  --theme-primary: #ff71ce;
+  --theme-secondary: #01cdfe;
+  --theme-accent: #b967ff;
+  --theme-gradient: linear-gradient(90deg, #ff71ce 0%, #b967ff 50%, #01cdfe 100%);
+  --theme-border: #ff71ce;
+  --theme-shadow: rgba(255, 113, 206, 0.5);
+  --radius-card: 16px;
+  --radius-pill: 12px;
+  --shadow-card: 0 0 24px rgba(255, 113, 206, 0.35);
+}

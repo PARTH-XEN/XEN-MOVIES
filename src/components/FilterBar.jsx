@@ -1,22 +1,26 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
+import { spatialAudio } from '../utils/spatialAudio';
+import { triggerHaptic } from '../utils/haptics';
+import { X } from 'lucide-react';
 
 export default function FilterBar() {
   const { selectedGenre, setSelectedGenre } = useApp();
 
   const genres = [
-    { id: 'all', label: 'All Genres' },
-    { id: 'Action', label: 'Action 💥' },
-    { id: 'Sci-Fi', label: 'Sci-Fi 🚀' },
-    { id: 'Horror', label: 'Horror 👻' },
-    { id: 'Comedy', label: 'Comedy 😂' },
-    { id: 'Romance', label: 'Romance ❤️' },
-    { id: 'Thriller', label: 'Thriller 🔪' },
-    { id: 'Animation', label: 'Animation 🎨' },
-    { id: 'Crime', label: 'Crime 🕵️' },
-    { id: 'Fantasy', label: 'Fantasy 🧙' },
-    { id: 'Drama', label: 'Drama 🎭' },
-    { id: 'bollywood', label: 'Bollywood / Hindi 🇮🇳' }
+    { id: 'all', label: 'All' },
+    { id: 'Action', label: 'Action' },
+    { id: 'Animation', label: 'Anime & Animation' },
+    { id: 'Sci-Fi', label: 'Sci-Fi' },
+    { id: 'Horror', label: 'Horror' },
+    { id: 'Comedy', label: 'Comedy' },
+    { id: 'Romance', label: 'Romance' },
+    { id: 'Thriller', label: 'Thriller' },
+    { id: 'Crime', label: 'Crime' },
+    { id: 'Fantasy', label: 'Fantasy' },
+    { id: 'Drama', label: 'Drama' },
+    { id: 'Mystery', label: 'Mystery' },
+    { id: 'bollywood', label: 'Bollywood & Hindi' }
   ];
 
   return (
@@ -26,18 +30,38 @@ export default function FilterBar() {
         return (
           <button
             key={g.id}
-            onClick={() => setSelectedGenre(g.id)}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-200 ${
+            onClick={() => {
+              spatialAudio.playClick();
+              triggerHaptic('selection');
+              setSelectedGenre(isSelected && g.id !== 'all' ? 'all' : g.id);
+            }}
+            data-tv-focus="true"
+            tabIndex={0}
+            onMouseEnter={() => spatialAudio.playHover(0)}
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 ${
               isSelected
-                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-600/30 scale-105'
-                : 'bg-[#111422] text-slate-400 hover:text-slate-200 hover:bg-[#161a2e] border border-slate-800'
+                ? 'bg-[var(--color-accent)] text-white font-semibold shadow-md shadow-[var(--theme-shadow)] border border-[var(--color-accent)]'
+                : 'bg-neutral-900/80 text-neutral-400 hover:text-neutral-100 hover:bg-neutral-800 border border-neutral-800/80'
             }`}
           >
             {g.label}
           </button>
         );
       })}
+
+      {selectedGenre !== 'all' && (
+        <button
+          onClick={() => {
+            spatialAudio.playClick();
+            triggerHaptic('light');
+            setSelectedGenre('all');
+          }}
+          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-neutral-900 text-neutral-400 hover:text-red-400 border border-neutral-800 hover:border-red-900/50 text-xs font-medium transition-colors cursor-pointer flex-shrink-0"
+        >
+          <X className="w-3.5 h-3.5" />
+          <span>Reset</span>
+        </button>
+      )}
     </div>
   );
 }
-

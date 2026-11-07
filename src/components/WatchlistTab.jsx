@@ -1,10 +1,54 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { Bookmark, Play, Download, Trash2, Film, Star } from 'lucide-react';
+import { Bookmark, Play, Download, Trash2, Film, Star, User, Sparkles, LogIn, ShieldCheck } from 'lucide-react';
+import { spatialAudio } from '../utils/spatialAudio';
 
 export default function WatchlistTab() {
-  const { watchlist, handleToggleWatchlist, openStream, openDownload, openDetails } = useApp();
+  const { watchlist, handleToggleWatchlist, openStream, openDownload, openDetails, user, openAuthModal } = useApp();
   const [filter, setFilter] = useState('all');
+
+  if (!user) {
+    return (
+      <div className="max-w-xl mx-auto py-12 px-4 space-y-6 text-center select-none animate-in fade-in duration-300">
+        <div className="p-8 sm:p-10 rounded-2xl bg-neutral-900 border border-neutral-800 shadow-xl space-y-5">
+          <div className="w-12 h-12 rounded-xl bg-neutral-800 border border-neutral-700 mx-auto flex items-center justify-center text-[var(--color-accent)]">
+            <Bookmark className="w-6 h-6" />
+          </div>
+
+          <div className="space-y-1.5 max-w-sm mx-auto">
+            <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+              Sign In to View Watchlist
+            </h2>
+            <p className="text-xs text-neutral-400 leading-relaxed">
+              Saving movies and TV series requires an account so your personal library stays private and syncs across your devices.
+            </p>
+          </div>
+
+          <div className="flex items-center justify-center gap-3 pt-2 flex-wrap">
+            <button
+              onClick={() => {
+                spatialAudio.playOpen();
+                openAuthModal('signup');
+              }}
+              className="px-5 py-2.5 rounded-xl bg-white hover:bg-neutral-200 text-neutral-950 font-semibold text-xs transition-colors cursor-pointer"
+            >
+              Create Free Account
+            </button>
+
+            <button
+              onClick={() => {
+                spatialAudio.playClick();
+                openAuthModal('login');
+              }}
+              className="px-5 py-2.5 rounded-xl bg-neutral-800 hover:bg-neutral-750 border border-neutral-700 text-neutral-200 font-medium text-xs transition-colors cursor-pointer"
+            >
+              Sign In with Email
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const filtered = watchlist.filter(item => {
     if (filter === 'all') return true;
@@ -19,23 +63,23 @@ export default function WatchlistTab() {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white flex items-center gap-3">
-            <Bookmark className="w-7 h-7 text-purple-400" />
-            <span>My Local Watchlist</span>
+          <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2.5">
+            <Bookmark className="w-6 h-6 text-[var(--color-accent)]" />
+            <span>{(user?.name || user?.email || 'User').split(' ')[0]}'s Watchlist</span>
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Persisted offline in SQLite database • {watchlist.length} titles saved
+          <p className="text-xs text-neutral-400 mt-1">
+            Connected to {user?.email || 'account'} • {watchlist?.length || 0} titles saved in private library
           </p>
         </div>
 
         {/* Filter Pills */}
-        <div className="flex items-center gap-1.5 bg-[#121626] p-1 rounded-xl border border-slate-800">
+        <div className="flex items-center gap-1 bg-neutral-900 p-1 rounded-xl border border-neutral-800">
           {['all', 'movie', 'series'].map((type) => (
             <button
               key={type}
               onClick={() => setFilter(type)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold uppercase transition-colors ${
-                filter === type ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium uppercase transition-colors cursor-pointer ${
+                filter === type ? 'bg-neutral-100 text-neutral-950 font-semibold' : 'text-neutral-400 hover:text-white'
               }`}
             >
               {type === 'all' ? 'All' : type === 'movie' ? 'Movies' : 'TV Shows'}
@@ -46,23 +90,23 @@ export default function WatchlistTab() {
 
       {/* Grid or Empty State */}
       {filtered.length === 0 ? (
-        <div className="py-24 text-center glass-panel rounded-3xl border border-purple-500/20 space-y-3">
-          <Bookmark className="w-12 h-12 text-slate-600 mx-auto" />
-          <h3 className="text-lg font-semibold text-slate-300">Your Watchlist is empty</h3>
-          <p className="text-xs text-slate-500 max-w-sm mx-auto">
-            Browse trending movies or TV series and click the bookmark icon to save them locally.
+        <div className="py-20 text-center rounded-2xl bg-neutral-900/60 border border-neutral-800 space-y-3">
+          <Bookmark className="w-10 h-10 text-neutral-600 mx-auto" />
+          <h3 className="text-sm font-semibold text-neutral-300">Your Watchlist is empty</h3>
+          <p className="text-xs text-neutral-500 max-w-sm mx-auto">
+            Browse movies or TV series and click the bookmark icon to save them to your library.
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
           {filtered.map((item) => (
             <div
               key={item.media_id || item.id}
-              className="group relative rounded-2xl overflow-hidden glass-card transition-all duration-300 hover:-translate-y-1"
+              className="group relative rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800 hover:border-neutral-700 transition-all"
             >
               {/* Poster */}
               <div 
-                className="aspect-[2/3] w-full overflow-hidden bg-slate-900 cursor-pointer relative"
+                className="aspect-[2/3] w-full overflow-hidden bg-neutral-950 cursor-pointer relative"
                 onClick={() => openDetails({ id: item.media_id, name: item.title, type: item.type, poster: item.poster })}
               >
                 <img
@@ -72,7 +116,7 @@ export default function WatchlistTab() {
                   onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&q=80'; }}
                 />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40 opacity-80" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 opacity-80" />
 
                 <div className="absolute top-2 right-2">
                   <button
@@ -80,7 +124,7 @@ export default function WatchlistTab() {
                       e.stopPropagation();
                       handleToggleWatchlist({ id: item.media_id, title: item.title });
                     }}
-                    className="p-1.5 rounded-lg bg-red-600/80 hover:bg-red-600 text-white backdrop-blur-md transition-colors"
+                    className="p-1.5 rounded-lg bg-neutral-950/80 hover:bg-rose-600 text-neutral-300 hover:text-white backdrop-blur-md transition-colors cursor-pointer"
                     title="Remove from Watchlist"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -88,7 +132,7 @@ export default function WatchlistTab() {
                 </div>
 
                 {item.imdb_rating && (
-                  <div className="absolute top-2 left-2 flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-black/70 text-amber-300 border border-amber-500/30">
+                  <div className="absolute top-2 left-2 flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-black/70 text-amber-300 border border-amber-500/30">
                     <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
                     <span>{item.imdb_rating}</span>
                   </div>
@@ -96,21 +140,21 @@ export default function WatchlistTab() {
               </div>
 
               {/* Bottom Meta & Actions */}
-              <div className="p-3 bg-[#0a0c16] space-y-2">
-                <div className="font-semibold text-xs sm:text-sm text-slate-200 truncate">
+              <div className="p-2.5 bg-neutral-900 space-y-2">
+                <div className="font-medium text-xs sm:text-sm text-neutral-200 truncate">
                   {item.title}
                 </div>
-                <div className="flex items-center gap-1.5 pt-1">
+                <div className="flex items-center gap-1.5">
                   <button
                     onClick={() => openStream({ id: item.media_id, name: item.title, type: item.type, poster: item.poster })}
-                    className="flex-1 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-[11px] font-bold flex items-center justify-center gap-1"
+                    className="flex-1 py-1.5 rounded-lg bg-white hover:bg-neutral-200 text-neutral-950 text-xs font-semibold flex items-center justify-center gap-1 cursor-pointer transition-colors"
                   >
-                    <Play className="w-3 h-3 fill-white" />
+                    <Play className="w-3 h-3 fill-current" />
                     <span>Stream</span>
                   </button>
                   <button
                     onClick={() => openDownload({ id: item.media_id, name: item.title, type: item.type, poster: item.poster })}
-                    className="flex-1 py-1.5 rounded-lg bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-300 border border-cyan-500/30 text-[11px] font-bold flex items-center justify-center gap-1"
+                    className="flex-1 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-750 text-neutral-300 text-xs font-medium border border-neutral-700 flex items-center justify-center gap-1 cursor-pointer transition-colors"
                   >
                     <Download className="w-3 h-3" />
                     <span>Links</span>
@@ -126,4 +170,3 @@ export default function WatchlistTab() {
     </div>
   );
 }
-

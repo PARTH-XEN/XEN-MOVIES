@@ -3,22 +3,64 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#07080d" />
+    <meta name="theme-color" content="#14111c" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="XENMOVIES" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="format-detection" content="telephone=no" />
-    <title>XENMOVIES — Free Cinema & Direct Download Hub</title>
+
+    <!-- Google Site Verification -->
+    <meta name="google-site-verification" content="TxdpzCgqT0ELGa5BwWlAAIrFyXR484HKAulgwuQeyWc" />
+
+    <!-- Primary Meta Tags -->
+    <title>XENMOVIES - Free Cinema and Direct Download Hub</title>
+    <meta name="title" content="XENMOVIES - Free Cinema and Direct Download Hub" />
+    <meta name="description" content="Stream movies, TV shows, anime, and Bollywood content in HD/4K with zero ads. Direct downloads available. Spatial cinema experience with TV remote support." />
+    <meta name="keywords" content="movies, streaming, tv shows, anime, bollywood, downloads, free streaming, hd movies, 4k movies, cinema, film, series, movies online, watch movies, download movies" />
+    <meta name="author" content="Parth Patni (PARTH-XEN)" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://xenmovies.antideploy.app/" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://xenmovies.antideploy.app/" />
+    <meta property="og:title" content="XENMOVIES - Free Cinema and Direct Download Hub" />
+    <meta property="og:description" content="Stream movies, TV shows, anime, and Bollywood content in HD/4K with zero ads. Direct downloads available." />
+    <meta property="og:image" content="https://xenmovies.antideploy.app/LOGO/XEN-MOVIES.png" />
+    <meta property="og:site_name" content="XENMOVIES" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://xenmovies.antideploy.app/" />
+    <meta property="twitter:title" content="XENMOVIES - Free Cinema and Direct Download Hub" />
+    <meta property="twitter:description" content="Stream movies, TV shows, anime, and Bollywood content in HD/4K with zero ads. Direct downloads available." />
+    <meta property="twitter:image" content="https://xenmovies.antideploy.app/LOGO/XEN-MOVIES.png" />
+
+    <!-- Geo Location -->
+    <meta name="geo.region" content="IN" />
+    <meta name="geo.placename" content="India" />
+
+    <!-- Developer -->
+    <meta name="developer" content="Parth Patni (PARTH-XEN)" />
+    <meta name="contact" content="parthxen09@gmail.com" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Inter:wght@300;400;600;800&family=Orbitron:wght@600;900&family=Outfit:wght@300;400;600;800&family=Press+Start+2P&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238b5cf6'><path d='M18 3v2h-2V3H8v2H6V3H4v18h2v-2h2v2h8v-2h2v2h2V3h-2zM8 17H6v-2h2v2zm0-4H6v-2h2v2zm0-4H6V7h2v2zm10 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2z'/></svg>" />
     <link rel="apple-touch-icon" href="/LOGO/XEN-MOVIES.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
   </head>
-  <body class="bg-[#07080d] text-slate-100 font-['Plus_Jakarta_Sans',sans-serif] antialiased selection:bg-purple-600 selection:text-white min-h-screen safe-top safe-bottom">
+  <body class="antialiased selection:bg-purple-600 selection:text-white min-h-screen">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
+      }
+    </script>
   </body>
 </html>
-
